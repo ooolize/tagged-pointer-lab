@@ -1,0 +1,1 @@
+vcvarsall.bat amd64 ; Remove-Item -Path .\build\* -Recurse -Force ; conan install .  --build=missing ;cmake --preset conan-default ;cmake --build --preset conan-release

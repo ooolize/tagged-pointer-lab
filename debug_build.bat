@@ -1,0 +1,1 @@
+Remove-Item -Path .\build\* -Recurse -Force && conan install . --build=missing --settings=build_type=Debug && cmake --preset conan-default && cmake --build --preset conan-debug

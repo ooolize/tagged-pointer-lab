@@ -1,0 +1,244 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Configure Release",
+            "type": "shell",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing",
+                "--settings=build_type=Release"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Configure Debug", 
+            "type": "shell",
+            "command": "conan",
+            "args": [
+                "install",
+                ".",
+                "--build=missing", 
+                "--settings=build_type=Debug"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build Release",
+            "type": "shell", 
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "conan-release"
+            ],
+            "group": "build",
+            "dependsOn": "Configure Release",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Build Debug",
+            "type": "shell",
+            "command": "cmake", 
+            "args": [
+                "--build",
+                "--preset",
+                "conan-debug"
+            ],
+            "group": "build",
+            "dependsOn": "Configure Debug",
+            "presentation": {
+                "echo": true,
+                "reveal": "always", 
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "🐛 Configure&Debug Build",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Configure Debug",
+                "Build Debug"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "🚀 Configure&Release Build",
+            "dependsOrder": "sequence", 
+            "dependsOn": [
+                "Configure Release",
+                "Build Release"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Configure All Presets",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command", 
+                "conan install . --build=missing --settings=build_type=Release; conan install . --build=missing --settings=build_type=Debug"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🔨 Full Debug Build",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "Write-Host Starting Debug Build...; conan install . --build=missing --settings=build_type=Debug; cmake --preset conan-default; cmake --build --preset conan-debug"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🔨 Full Release Build",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "Write-Host Starting Release Build...; conan install . --build=missing --settings=build_type=Release; cmake --preset conan-default; cmake --build --preset conan-release"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🔨 Quick Debug Build",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "conan-debug"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "🔨 Quick Release Build",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "conan-release"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "🔨 Build Project (Choose Mode)",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy", "Bypass",
+                "-File", ".vscode/build_menu.ps1",
+                "-Mode", "${input:buildType}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "buildType",
+            "description": "Select build type",
+            "type": "pickString",
+            "options": [
+                {
+                    "label": "Debug Build (Full Configure + Build)",
+                    "value": "full-debug"
+                },
+                {
+                    "label": "Release Build (Full Configure + Build)",
+                    "value": "full-release"
+                },
+                {
+                    "label": "Quick Debug Build (Skip Configure)",
+                    "value": "quick-debug"
+                },
+                {
+                    "label": "Quick Release Build (Skip Configure)",
+                    "value": "quick-release"
+                }
+            ]
+        }
+    ]
+}
