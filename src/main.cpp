@@ -20,6 +20,6 @@ int main() {
   mujica.Vocal();
 
   // TODO 如何清理？
-  // band1.Delete();
+  // mygo.Delete();
   return 0;
 }

@@ -44,12 +44,9 @@ class TaggedPointer {
   TaggedPointer(T* ptr) {
     auto index = IndexOf<T, Ts...>();
     // dump<T, Ts...>();
-    // fmt::print("Index of type is: {}\n", index);
     assert(index >= 0);
     int64_t mask = index == 0 ? 0LL : 1LL << (index - 1 + 63 - 7);
-    // fmt::print("Mask is: {:#018x}\n", mask);
     _ptr = reinterpret_cast<uint64_t>(ptr) | mask;
-    // fmt::print("Tagged Pointer is: {:#018x}\n", _ptr);
   }
 
   template <typename Func>
@@ -61,16 +58,12 @@ class TaggedPointer {
  private:
   template <typename Func, std::size_t... Is>
   auto dispatch_imp(Func func, int64_t index, std::index_sequence<Is...>) {
-    // fmt::print("Index of type is: {}\n", index);
     (((index == Is)
         ? (func(reinterpret_cast<std::tuple_element_t<Is, std::tuple<Ts...>>*>(
              _ptr & 0x00FFFFFFFFFFFFFF)),
            true)
         : false) ||
      ...);
-
-    // return reinterpret_cast<std::tuple_element_t<0, std::tuple<Ts...>>*>(
-    //   _ptr & 0x00FFFFFFFFFFFFFF);
   }
 
   uint64_t _ptr{0};
